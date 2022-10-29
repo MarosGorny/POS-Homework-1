@@ -35,7 +35,7 @@ echo
 
 read -p "    Zadaj tvoj nick prosim ta: " nick
 echo
-echo "*** $nick mozes si vybrat obtiaznost ***"
+echo "*** Mozes si vybrat obtiaznost ***"
 echo "  1.EASY   - 30 pokusov na uhadnutie"
 echo "  2.NORMAL - 15 pokusov na uhadnutie"
 echo "  3.HARD   - 5  pokusov na uhadnutie" 
@@ -48,7 +48,7 @@ echo
 repeat="yes"
 
 if [ $status -ne 0 ]; then
-	echo "*** Nevybral si si ziadnu obtiaznost ***"
+	echo "*** $nick nevybral si si ziadnu obtiaznost ***"
 	echo "    Asi sa trosku bojis..."
 	echo "    Skus teda NORMAL obtiaznost"
 	echo 
@@ -61,19 +61,19 @@ else
 		case $obtiaznost in
 			"1"|"e"|"E"|"easy"|"Easy"|"EASY")
 				repeat="no"
-				obtiaznost=1
+				obtiaznost="EASY"
 				readonly maxTries=30
 				echo "Zvolena obtiaznost EASY!"
 				echo;;		
 			"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
 				repeat="no"
-				obtiaznost=2
+				obtiaznost="NORMAL"
 				readonly maxTries=15
 				echo "Zvolena obtiaznost NORMAL!"
 				echo;;
 			"3"|"h"|"H"|"hard"|"Hard"|"HARD")
 				repeat="no"
-				obtiaznost=3
+				obtiaznost="HARD"
 				readonly maxTries=5
 				echo "Zvolena obtiaznost HARD!"
 				echo;;
@@ -89,17 +89,16 @@ fi
 
 
 
-read -p "*** Ak si pripraveny, stlac ENTER ***"
+read -p "*** $nick, ak si pripraveny, stlac ENTER ***"
 echo
 for i in {1..3}
 do
-#printBombSound
-echo
+printBombSound
 done
 echo
 sleep 0.5
 
-echo "Co este robis? Bomba pipa a je potrebne ju zneskodnit!"
+echo "Co este robis? Bomba piiiiipa a je potrebne ju zneskodnit!"
 echo
 
 
@@ -126,6 +125,7 @@ let countTries=1
 while [ $maxTries -ge $countTries ]
 do
 	echo
+	echo
 	echo "Pokus c.$countTries"
 	echo
 	### Tipovanie cisiel od prveho po stvrte
@@ -140,40 +140,72 @@ do
 		fi
 	done
 
-	### Pridanie jedneho pokusu
-	let countTries+=1
 
 	### Vypocitanie kolko sa trafilo/bolo mensich/bolo vacsich
 	for i in {0..3}
 	do
 		if [ ${secretPin[i]} -lt ${guessedPin[i]} ]
 		then
-			let lesserDigits+=1
+			let greaterDigits+=1
 		elif [ ${secretPin[i]} -gt ${guessedPin[i]} ]
 		then
-			let greaterDigits+=1
+			let lesserDigits+=1
 		else
 			let equalDigits+=1
 		fi
 	done
 
-	### Vypisanie hadaneho a original PIN-u
-	echo "Original PIN: ${secretPin[*]} "
-	echo "Zadany PIN:   ${guessedPin[*]} "
 
-	echo
-
-	### Vypisanie kolko je rovnych/vacsich/mensich
-	echo "Equal digits $equalDigits"
-	echo "Greater digits $greaterDigits"
-	echo "Lesser digits $lesserDigits"
-	
 	if [ $equalDigits -eq 4 ]
 	then
-		echo "Vyhral si hru na $countTries pokusov"
+		echo
+		echo
+		echo "<<< GRATULUJEM >>>"
+		case $countTries in
+			1)
+				echo "Bomba zneskodne na prvy pokus!";;
+			2|3|4)
+				echo "Bomba zneskodnena na $countTries pokusy!";;
+			*)
+				echo "Bomba zneskodnena na $countTries pokusov!";;
+		esac
+
+		echo "Hladana kombinacia: ${secretPin[*]}"
+		case $obtiaznost in 
+			EASY)
+				echo "$nick ON EASY MODE... Well at least you did it...";;
+			NORMAL)
+				echo "$nick ON NORMAL MODE! BOMBASTIC!";;
+			HARD)
+				echo "$nick ON HARD MODE! YOU CAN DO IT EVEN WITH CLOSED EYES, RIGHT?!";;
+		esac
 		break
+	else
+		### Vypisanie hadaneho a original PIN-u
+		#echo "Original PIN:        ${secretPin[*]} "
+		echo "Zadana postupnost:   ${guessedPin[*]} "
+		echo "$nick zly pokus;"
+		echo
+		echo "*******************************************************"
+		if [ $equalDigits -ne 0 ]
+		then
+			echo "Pocet trafenych cifier: $equalDigits"
+		fi
+		if [ $greaterDigits -ne 0 ]
+		then
+			echo "Pocet cifier, ktorych hodnota je mensia ako tipovana: $greaterDigits"
+		fi
+		if [ $lesserDigits -ne 0 ]
+		then
+			echo "Pocet cifier, ktorych hodnota je vacisa ako tipovana: $lesserDigits"
+		fi
+		echo "*******************************************************"
 	fi
 
+	### Pridanie jedneho pokusu
+	let countTries+=1
+
+		
 	### Reset rovnych/vacsich/mensich
 	let equalDigits=0
 	let greaterDigits=0
@@ -186,11 +218,4 @@ done
 #setSecretPin 1 2 3 4
 #echo "Original PIN: ${secretPin[*]} "
 
-
-if [ $equalDigits -eq 4 ]
-then
-	echo "Hra konci, vyhral si"
-
-fi
-
-echo
+exit 0
