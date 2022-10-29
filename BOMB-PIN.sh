@@ -62,7 +62,23 @@ do
 	secretPin[i]=$func_result
 done
 
-echo ${secretPin[*]}
-echo ${#secretPin[@]}
+#echo ${secretPin[*]} vypis vsetkych
+#echo ${#secretPin[@]} vypis pocet
+
+numberAsk=("prvu" "druhu" "tretiu" "stvrtu")
+guessedPin=(0 0 0 0)
+for i in {0..3}
+do
+	read -p "Zadajte ${numberAsk[i]} cislicu: " cislo
+	if [ -z $cislo ] # Ak je cislo null
+	then
+		guessedPin[i]=0
+	else
+		guessedPin[i]=$(( $cislo % 10 ))
+	fi
+done
+
+echo ${guessedPin[*]}
+
 
 echo
