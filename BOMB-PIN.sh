@@ -12,30 +12,48 @@ function setSecretPin() {
 	done
 }
 
+function printBombSound() {
+	echo -n "P"
+	sleep 0.1
+	for i in {0..14}
+	do
+	echo -n "I"
+	sleep 0.05
+	done
+	echo "P"
+	sleep 1
+}
 
-
-echo "BOMBA HRA"
-echo "TOTO JE JEJ POPIS"
+echo "*** Vitaj v hre zneskodni bombu ***"
+echo
+echo "    Tvojou ulohou je zneskodnit bombu zadanim 4 miestneho kodu."
+echo "    Jednotlive cisla sa zadavaju samostatne."
+echo "    Po zadani 4 cislic sa tvoj pokus vyhodnoti."
+echo "    Zobrazi sa ti informacia o tom, kolko cislis si uhadol
+    a kolko cislic ma vyssiu alebo nizsiu hodnotu ako tvoj tip"
 echo
 
-#read -p "Zadaj svoj nick: " nick
-#echo $nick
-
+read -p "    Zadaj tvoj nick prosim ta: " nick
 echo
-echo "**OBTIZNOSTI**"
-echo "EASY"
-echo "MEDIUM"
-echo "HARD"
+echo "*** $nick mozes si vybrat obtiaznost ***"
+echo "  1.EASY   - 30 pokusov na uhadnutie"
+echo "  2.NORMAL - 15 pokusov na uhadnutie"
+echo "  3.HARD   - 5  pokusov na uhadnutie" 
 echo
 
-read  -t5 -rep $'*******Vyber si obtiaznost*******\n' obtiaznost
-
+read -t5 obtiaznost
 status=$?
+echo
+
 repeat="yes"
 
 if [ $status -ne 0 ]; then
-	echo "NEVYBRAL SI OBTIAZNOST"
-	echo "Tvoja obtiaznost je nastavena na EASY"
+	echo "*** Nevybral si si ziadnu obtiaznost ***"
+	echo "    Asi sa trosku bojis..."
+	echo "    Skus teda NORMAL obtiaznost"
+	echo 
+	echo "Zvolena NORMAL obtiaznost!"
+	echo
 	readonly maxTries=2
 else
 	while [ $repeat == "yes" ]
@@ -44,24 +62,46 @@ else
 			"1"|"e"|"E"|"easy"|"Easy"|"EASY")
 				repeat="no"
 				obtiaznost=1
-				readonly maxTries=2
-				echo "vybrata obtiaznost na EASY";;		
+				readonly maxTries=30
+				echo "Zvolena obtiaznost EASY!"
+				echo;;		
 			"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
 				repeat="no"
 				obtiaznost=2
-				readonly maxTries=4
-				echo "vybrata obtiaznost na NORMAL";;
+				readonly maxTries=15
+				echo "Zvolena obtiaznost NORMAL!"
+				echo;;
 			"3"|"h"|"H"|"hard"|"Hard"|"HARD")
 				repeat="no"
 				obtiaznost=3
 				readonly maxTries=5
-				echo "vybrata obtiaznost na HARD";;
+				echo "Zvolena obtiaznost HARD!"
+				echo;;
 			*)
-				echo "Neznama hodnota"
-				read -ep $'zadaj obtiaznost este raz\n' obtiaznost ;;
+				echo "Chapem ze sa bojis a mozno sa ti trasu ruky..."
+				echo "Ale obtiaznost ktoru si zadal neexistuje"
+				read -ep $'Skus zadat obtiaznost este raz\n' obtiaznost
+				echo ;;
 		esac
 	done
 fi
+
+
+
+
+read -p "*** Ak si pripraveny, stlac ENTER ***"
+echo
+for i in {1..3}
+do
+#printBombSound
+echo
+done
+echo
+sleep 0.5
+
+echo "Co este robis? Bomba pipa a je potrebne ju zneskodnit!"
+echo
+
 
 ##Generating secret PIN
 secretPin=(0 0 0 0)
@@ -81,14 +121,17 @@ guessedPin=(0 0 0 0)
 let equalDigits=0
 let greaterDigits=0
 let lesserDigits=0
-let countTries=0
+let countTries=1
 
-while [ $maxTries -ne $countTries ] && [ $equalDigits -ne 4 ]
+while [ $maxTries -ge $countTries ]
 do
+	echo
+	echo "Pokus c.$countTries"
+	echo
 	### Tipovanie cisiel od prveho po stvrte
 	for i in {0..3}
 	do
-		read -p "Zadajte ${numberAsk[i]} cislicu: " cislo
+		read -p "$nick zadaj ${numberAsk[i]} cislicu: " cislo
 		if [ -z $cislo ] # Ak je cislo null
 		then
 			guessedPin[i]=0
