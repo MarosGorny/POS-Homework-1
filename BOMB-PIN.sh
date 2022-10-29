@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function randomDigit() {
+	func_result=$(( $RANDOM % 10)) #Globalna premenna
+	#Ak chcem vyvolat result - echo $func_result
+}
+
+
+
 echo "BOMBA HRA"
 echo "TOTO JE JEJ POPIS"
 echo
@@ -46,5 +53,16 @@ else
 		esac
 	done
 fi
+
+##Generating secret PIN
+secretPin=(0 0 0 0)
+for i in {0..3}
+do
+	randomDigit	
+	secretPin[i]=$func_result
+done
+
+echo ${secretPin[*]}
+echo ${#secretPin[@]}
 
 echo
