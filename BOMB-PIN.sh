@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 function randomDigit() {
 	func_result=$(( $RANDOM % 10)) #Globalna premenna
@@ -78,7 +78,30 @@ do
 	fi
 done
 
-echo ${guessedPin[*]}
+echo "Original PIN: ${secretPin[*]} "
+echo "Zadany PIN:   ${guessedPin[*]} "
 
+echo ${secretPin[0]}
+
+let equalDigits=0
+let greaterDigits=0
+let lesserDigits=0
+
+for i in {0..3}
+do
+	if [ ${secretPin[i]} -lt ${guessedPin[i]} ]
+	then
+		let lesserDigits+=1
+	elif [ ${secretPin[i]} -gt ${guessedPin[i]} ]
+	then
+		let greaterDigits+=1
+	else
+		let equalDigits+=1
+	fi
+done
+
+echo "Equal digits $equalDigits"
+echo "Greater digits $greaterDigits"
+echo "Lesser digits $lesserDigits"
 
 echo
