@@ -18,10 +18,10 @@ function printBombSound() {
 	for i in {0..14}
 	do
 	echo -n "I"
-	sleep 0.05
+	sleep 0.02
 	done
 	echo "P"
-	sleep 1
+	sleep 0.5
 }
 
 echo "*** Vitaj v hre zneskodni bombu ***"
@@ -45,8 +45,6 @@ read -t5 obtiaznost
 status=$?
 echo
 
-repeat="yes"
-
 if [ $status -ne 0 ]; then
 	echo "*** $nick nevybral si si ziadnu obtiaznost ***"
 	echo "    Asi sa trosku bojis..."
@@ -54,36 +52,33 @@ if [ $status -ne 0 ]; then
 	echo 
 	echo "Zvolena NORMAL obtiaznost!"
 	echo
-	readonly maxTries=2
+	readonly maxTries=15
+	obtiaznost="NORMAL"
 else
-	while [ $repeat == "yes" ]
-	do
-		case $obtiaznost in
-			"1"|"e"|"E"|"easy"|"Easy"|"EASY")
-				repeat="no"
-				obtiaznost="EASY"
-				readonly maxTries=30
-				echo "Zvolena obtiaznost EASY!"
-				echo;;		
-			"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
-				repeat="no"
-				obtiaznost="NORMAL"
-				readonly maxTries=15
-				echo "Zvolena obtiaznost NORMAL!"
-				echo;;
-			"3"|"h"|"H"|"hard"|"Hard"|"HARD")
-				repeat="no"
-				obtiaznost="HARD"
-				readonly maxTries=5
-				echo "Zvolena obtiaznost HARD!"
-				echo;;
-			*)
-				echo "Chapem ze sa bojis a mozno sa ti trasu ruky..."
-				echo "Ale obtiaznost ktoru si zadal neexistuje"
-				read -ep $'Skus zadat obtiaznost este raz\n' obtiaznost
-				echo ;;
-		esac
-	done
+	case $obtiaznost in
+		"1"|"e"|"E"|"easy"|"Easy"|"EASY")
+			obtiaznost="EASY"
+			readonly maxTries=30
+			echo "Zvolena obtiaznost EASY!"
+			echo;;		
+		"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
+			obtiaznost="NORMAL"
+			readonly maxTries=15
+			echo "Zvolena obtiaznost NORMAL!"
+			echo;;
+		"3"|"h"|"H"|"hard"|"Hard"|"HARD")
+			obtiaznost="HARD"
+			readonly maxTries=5
+			echo "Zvolena obtiaznost HARD!"
+			echo;;
+		*)
+			echo "Chapem ze sa bojis a mozno sa ti trasu ruky..."
+			echo "Ale obtiaznost ktoru si zadal neexistuje"
+			echo "Preto skus NORMAL obtiaznost"
+			obtiaznost="NORMAL"
+			readonly maxTries=15
+			echo ;;
+	esac
 fi
 
 
@@ -212,7 +207,19 @@ do
 	let lesserDigits=0
 done
 
-
+if [ $countTries -ge $maxTries ]
+then
+	echo
+	echo
+	echo "**** GAME  OVER ****"
+	echo "     Bomba vybuchla"
+	echo "     Hladana kombinacia: ${secretPin[*]}"
+	if [ $obtiaznost != "EASY" ]
+	then
+		echo "     Is $obtiaznost mode too hardcore, $nick?"
+		echo "     Maybe try EASY next time..."
+	fi
+fi
 
 
 #setSecretPin 1 2 3 4
