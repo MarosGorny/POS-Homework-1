@@ -19,29 +19,32 @@ read  -t5 -rep $'*******Vyber si obtiaznost*******\n' obtiaznost
 status=$?
 repeat="yes"
 
-while [ $repeat == "yes" ]
-do
-        read -ep $'zadaj hodnotu\n' repeat
-done
 
 
 if [ $status -ne 0 ]; then
-        echo "NEVYBRAL SI OBTIAZNOST"
-        echo "Tvoja obtiaznost je nastavena na EASY"
+	echo "NEVYBRAL SI OBTIAZNOST"
+	echo "Tvoja obtiaznost je nastavena na EASY"
 else
-        case $obtiaznost in
-                "1"|"e"|"E"|"easy"|"Easy"|"EASY")
-                        obtiaznost=1
-                        echo "vybrata obtiaznost na EASY";;
-                "2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
-                        obtiaznost=2
-                        echo "vybrata obtiaznost na NORMAL";;
-                "3"|"h"|"H"|"hard"|"Hard"|"HARD")
-                        obtiaznost=3
-                        echo "vybrata obtiaznost na HARD";;
-                *)
-                        echo "Neznama hodnota" ;;
-        esac
+	while [ $repeat == "yes" ]
+	do
+		case $obtiaznost in
+			"1"|"e"|"E"|"easy"|"Easy"|"EASY")
+				repeat="no"
+				obtiaznost=1
+				echo "vybrata obtiaznost na EASY";;		
+			"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
+				repeat="no"
+				obtiaznost=2
+				echo "vybrata obtiaznost na NORMAL";;
+			"3"|"h"|"H"|"hard"|"Hard"|"HARD")
+				repeat="no"
+				obtiaznost=3
+				echo "vybrata obtiaznost na HARD";;
+			*)
+				echo "Neznama hodnota"
+				read -ep $'zadaj obtiaznost este raz\n' obtiaznost ;;
+		esac
+	done
 fi
 
 echo
