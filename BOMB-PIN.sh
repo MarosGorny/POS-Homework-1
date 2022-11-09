@@ -60,7 +60,7 @@ else
 			obtiaznost="EASY"
 			readonly maxTries=30
 			echo "Zvolena obtiaznost EASY!"
-			echo;;		
+			echo;;
 		"2"|"n"|"N"|"normal"|"Normal"|"NORMAL")
 			obtiaznost="NORMAL"
 			readonly maxTries=15
@@ -101,7 +101,7 @@ echo
 secretPin=(0 0 0 0)
 for i in {0..3}
 do
-	randomDigit	
+	randomDigit
 	secretPin[i]=$func_result
 done
 
@@ -124,14 +124,21 @@ do
 	echo "Pokus c.$countTries"
 	echo
 	### Tipovanie cisiel od prveho po stvrte
-	for i in {0..3}
+
+	let i=0
+	while [ $i -lt 4 ]
 	do
-		read -p "$nick zadaj ${numberAsk[i]} cislicu: " cislo
-		if [ -z $cislo ] # Ak je cislo null
+		read -p "$nick zadaj ${numberAsk[i]} cislicu: " -a cislo
+		if [ -z ${cislo[0]} ] # Ak je cislo null
 		then
 			guessedPin[i]=0
+			let i+=1
+		elif ! [[ ${cislo[0]} =~ ^[0-9]+$ ]] # =~ string matches regex pattern
+		then
+			echo "Zadal si zly input, skus to znova"
 		else
 			guessedPin[i]=$(( $cislo % 10 ))
+			let i+=1
 		fi
 	done
 
@@ -158,7 +165,7 @@ do
 		echo "<<< GRATULUJEM >>>"
 		case $countTries in
 			1)
-				echo "Bomba zneskodne na prvy pokus!";;
+				echo "Bomba zneskodnena na prvy pokus!";;
 			2|3|4)
 				echo "Bomba zneskodnena na $countTries pokusy!";;
 			*)
@@ -200,7 +207,6 @@ do
 	### Pridanie jedneho pokusu
 	let countTries+=1
 
-		
 	### Reset rovnych/vacsich/mensich
 	let equalDigits=0
 	let greaterDigits=0
@@ -220,9 +226,5 @@ then
 		echo "     Maybe try EASY next time..."
 	fi
 fi
-
-
-#setSecretPin 1 2 3 4
-#echo "Original PIN: ${secretPin[*]} "
 
 exit 0
